@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import SchemaGraph from "../components/SchemaGraph";
-import { GROUPS, LEXICONS, lexiconDescription } from "../data/lexicons";
+import { GROUPS, lexiconDescription } from "../data/lexicons";
 import { palette, fonts } from "../theme";
 
 const mono = { fontFamily: fonts.mono };
@@ -13,19 +13,11 @@ export default function Overview() {
         component="p"
         sx={{ color: palette.inkSoft, fontSize: "15.5px", maxWidth: 660, m: 0, mb: "20px" }}
       >
-        AT Protocol record schemas developed by{" "}
+        AT Protocol record schemas by{" "}
         <Box component="a" href="https://gainforest.net" target="_blank" rel="noopener" sx={{ color: palette.link }}>
           GainForest
         </Box>{" "}
-        for environmental impact tracking, biodiversity data, and decentralized public goods — part
-        of the{" "}
-        <Box component="span" sx={{ color: palette.moss, fontStyle: "italic", fontFamily: fonts.serif }}>
-          Hypersphere
-        </Box>{" "}
-        ecosystem.{" "}
-        <Box component="span" sx={mono}>{LEXICONS.length}</Box> lexicons across{" "}
-        <Box component="span" sx={mono}>{GROUPS.length}</Box> namespaces. Biodiversity records align
-        with{" "}
+        for biodiversity observations, aligned with{" "}
         <Box component="a" href="https://dwc.tdwg.org/" target="_blank" rel="noopener" sx={{ color: palette.link }}>
           Darwin Core
         </Box>{" "}
@@ -33,7 +25,12 @@ export default function Overview() {
         <Box component="a" href="https://ac.tdwg.org/" target="_blank" rel="noopener" sx={{ color: palette.link }}>
           Audiovisual Core
         </Box>
-        ; cross-record links use{" "}
+        . A star schema:{" "}
+        <Box component="span" sx={mono}>occurrence</Box> references a shared{" "}
+        <Box component="span" sx={mono}>event</Box>;{" "}
+        <Box component="span" sx={mono}>measurement</Box> and{" "}
+        <Box component="span" sx={mono}>media</Box> reference an{" "}
+        <Box component="span" sx={mono}>occurrence</Box>. Cross-record links use{" "}
         <Box component="span" sx={mono}>com.atproto.repo.strongRef</Box>.
       </Box>
 

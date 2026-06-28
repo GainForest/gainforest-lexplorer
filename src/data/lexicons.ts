@@ -62,8 +62,18 @@ const modules = import.meta.glob<LexiconDoc>("../../lexicons/**/*.json", {
   import: "default",
 });
 
+// Focus the explorer on the two biodiversity standards: Darwin Core and
+// Audiovisual Core. Other namespaces stay in /lexicons but are not surfaced.
+const FOCUS_NAMESPACES = ["app.gainforest.dwc", "app.gainforest.ac"];
+
 export const LEXICONS: LexiconDoc[] = Object.values(modules)
-  .filter((m) => m && typeof m.id === "string" && m.defs)
+  .filter(
+    (m) =>
+      m &&
+      typeof m.id === "string" &&
+      m.defs &&
+      FOCUS_NAMESPACES.includes(m.id.slice(0, m.id.lastIndexOf(".")))
+  )
   .sort((a, b) => a.id.localeCompare(b.id));
 
 export const byId = new Map(LEXICONS.map((l) => [l.id, l]));
@@ -84,22 +94,8 @@ interface GroupMeta {
 }
 
 const GROUP_META: GroupMeta[] = [
-  { ns: "app.gainforest.dwc", title: "Darwin Core", blurb: "Biodiversity occurrence records aligned with the TDWG Simple Darwin Core standard." },
-  { ns: "app.gainforest.ac", title: "Audiovisual Core", blurb: "Media and passive-acoustic-monitoring records aligned with TDWG Audiovisual Core." },
-  { ns: "app.gainforest.gbif", title: "GBIF", blurb: "GBIF-aligned dataset metadata for biodiversity data publication." },
-  { ns: "app.gainforest.evaluator", title: "Evaluator", blurb: "Decentralized evaluator services — typed, attributed evaluations of records." },
-  { ns: "app.gainforest.organization", title: "Organization", blurb: "Organization profiles, sites, map layers, members, and donations." },
-  { ns: "app.gainforest.organization.observations", title: "Observations", blurb: "Field observation records — flora, fauna, dendrograms, and tree clusters." },
-  { ns: "app.gainforest.organization.predictions", title: "Predictions", blurb: "Model-derived prediction records for flora and fauna." },
-  { ns: "app.gainforest.funding", title: "Funding", blurb: "Donation and fundraising configuration for a record." },
-  { ns: "app.gainforest.link", title: "Links", blurb: "Verifiable links between an ATProto identity and external accounts." },
-  { ns: "app.gainforest.asset", title: "Assets", blurb: "Generic durable blob anchors for uploaded files." },
-  { ns: "app.gainforest.common", title: "Common", blurb: "Shared type definitions used across the GainForest lexicons." },
-  { ns: "pub.leaflet.blocks", title: "Leaflet · Blocks", blurb: "Content block types for structured document authoring." },
-  { ns: "pub.leaflet.pages", title: "Leaflet · Pages", blurb: "Document compositions built from ordered blocks." },
-  { ns: "pub.leaflet.richtext", title: "Leaflet · Rich text", blurb: "Rich-text annotation via facets." },
-  { ns: "app.bsky.richtext", title: "Bluesky · Rich text", blurb: "Bluesky richtext facet, included for compatibility." },
-  { ns: "com.atproto.repo", title: "AT Protocol", blurb: "Standard AT Protocol reference types." },
+  { ns: "app.gainforest.dwc", title: "Darwin Core", blurb: "Biodiversity occurrence records aligned with the TDWG Simple Darwin Core standard. Occurrences reference a shared event; measurements reference an occurrence." },
+  { ns: "app.gainforest.ac", title: "Audiovisual Core", blurb: "Media and passive-acoustic-monitoring records aligned with TDWG Audiovisual Core. Audio and multimedia link to a Darwin Core occurrence as evidence." },
 ];
 
 function namespaceOf(id: string): string {
