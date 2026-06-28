@@ -13,13 +13,14 @@ The `lexicons/` directory holds every schema, but the explorer only surfaces the
 sections configured in `SECTIONS` (see `src/data/lexicons.ts`). Currently:
 
 - **Darwin Core** & **Audiovisual Core** — biodiversity records (`app.gainforest.dwc`, `app.gainforest.ac`)
-- **Certified** — identity primitives (`app.certified.*`), from [hypercerts-org/hypercerts-lexicon](https://github.com/hypercerts-org/hypercerts-lexicon)
-- **Hypercerts** — activity claims, collections, funding receipts, attachments,
-  workscope, and shared types (`org.hypercerts.*`), from the same repo
+- **Certified** — a selected subset of identity primitives (organization, profile, award,
+  definition, location), from [hypercerts-org/hypercerts-lexicon](https://github.com/hypercerts-org/hypercerts-lexicon)
+- **Hypercerts** — the full `org.hypercerts.*` set (activity claims, collections, funding
+  receipts, attachments, workscope, shared types), from the same repo
 
 Lexicons outside these sections stay in `lexicons/` (so refs to them still resolve as
-labels) but aren't shown. To surface another, add a `{ prefix, title, blurb }` entry to
-`SECTIONS`.
+labels) but aren't shown. A section matches either by `prefix` (the whole subtree) or by an
+explicit `ids` allowlist — to surface more, add/extend a `SECTIONS` entry.
 
 ## Stack
 

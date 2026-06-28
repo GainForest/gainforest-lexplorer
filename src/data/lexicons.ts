@@ -67,9 +67,10 @@ const modules = import.meta.glob<LexiconDoc>("../../lexicons/**/*.json", {
 // Lexicons matching no section stay in /lexicons but are not surfaced — they
 // remain available as ref targets for cross-linking.
 interface Section {
-  prefix: string;
+  prefix: string; // displayed namespace label, and the match prefix when `ids` is absent
   title: string;
   blurb: string;
+  ids?: string[]; // when present, only these exact lexicon ids belong to the section
 }
 
 const SECTIONS: Section[] = [
@@ -89,44 +90,27 @@ const SECTIONS: Section[] = [
     prefix: "app.certified",
     title: "Certified",
     blurb:
-      "Certified identity primitives from the Hypercerts ecosystem — actors, badges, signatures, EVM links, and the social graph.",
+      "Certified identity primitives from the Hypercerts ecosystem — actor profiles, badges, and locations.",
+    ids: [
+      "app.certified.actor.organization",
+      "app.certified.actor.profile",
+      "app.certified.badge.award",
+      "app.certified.badge.definition",
+      "app.certified.location",
+    ],
   },
   {
-    prefix: "org.hypercerts.claim",
-    title: "Hypercerts · Claims",
+    prefix: "org.hypercerts",
+    title: "Hypercerts",
     blurb:
-      "Activity claims tracking impact work, with contribution, contributor, and rights detail.",
-  },
-  {
-    prefix: "org.hypercerts.collection",
-    title: "Hypercerts · Collections",
-    blurb: "Recursively nestable collections of activities and other collections.",
-  },
-  {
-    prefix: "org.hypercerts.funding",
-    title: "Hypercerts · Funding",
-    blurb: "Funding receipts recording payments between users.",
-  },
-  {
-    prefix: "org.hypercerts.context",
-    title: "Hypercerts · Attachments",
-    blurb:
-      "Attachments providing evidence, commentary, and documentary context for hypercert records.",
-  },
-  {
-    prefix: "org.hypercerts.workscope",
-    title: "Hypercerts · Workscope",
-    blurb: "Workscope expressions (CEL) and tags used by activity claims.",
-  },
-  {
-    prefix: "org.hypercerts.defs",
-    title: "Hypercerts · Shared types",
-    blurb: "Shared type definitions used across the Hypercerts lexicons.",
+      "Impact claims (activity, contribution, contributor, rights), collections, funding receipts, attachments, workscope, and shared types.",
   },
 ];
 
 function sectionFor(id: string): Section | undefined {
-  return SECTIONS.find((s) => id === s.prefix || id.startsWith(s.prefix + "."));
+  return SECTIONS.find((s) =>
+    s.ids ? s.ids.includes(id) : id === s.prefix || id.startsWith(s.prefix + ".")
+  );
 }
 
 export const LEXICONS: LexiconDoc[] = Object.values(modules)
