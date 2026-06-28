@@ -62,18 +62,75 @@ const modules = import.meta.glob<LexiconDoc>("../../lexicons/**/*.json", {
   import: "default",
 });
 
-// Focus the explorer on the two biodiversity standards: Darwin Core and
-// Audiovisual Core. Other namespaces stay in /lexicons but are not surfaced.
-const FOCUS_NAMESPACES = ["app.gainforest.dwc", "app.gainforest.ac"];
+// Sections shown in the explorer, in display order. A lexicon belongs to the
+// first section whose prefix matches its id (exact, or a dotted descendant).
+// Lexicons matching no section stay in /lexicons but are not surfaced — they
+// remain available as ref targets for cross-linking.
+interface Section {
+  prefix: string;
+  title: string;
+  blurb: string;
+}
+
+const SECTIONS: Section[] = [
+  {
+    prefix: "app.gainforest.dwc",
+    title: "Darwin Core",
+    blurb:
+      "Biodiversity occurrence records aligned with the TDWG Simple Darwin Core standard. Occurrences reference a shared event; measurements reference an occurrence.",
+  },
+  {
+    prefix: "app.gainforest.ac",
+    title: "Audiovisual Core",
+    blurb:
+      "Media and passive-acoustic-monitoring records aligned with TDWG Audiovisual Core. Audio and multimedia link to a Darwin Core occurrence as evidence.",
+  },
+  {
+    prefix: "app.certified",
+    title: "Certified",
+    blurb:
+      "Certified identity primitives from the Hypercerts ecosystem — actors, badges, signatures, EVM links, and the social graph.",
+  },
+  {
+    prefix: "org.hypercerts.claim",
+    title: "Hypercerts · Claims",
+    blurb:
+      "Activity claims tracking impact work, with contribution, contributor, and rights detail.",
+  },
+  {
+    prefix: "org.hypercerts.collection",
+    title: "Hypercerts · Collections",
+    blurb: "Recursively nestable collections of activities and other collections.",
+  },
+  {
+    prefix: "org.hypercerts.funding",
+    title: "Hypercerts · Funding",
+    blurb: "Funding receipts recording payments between users.",
+  },
+  {
+    prefix: "org.hypercerts.context",
+    title: "Hypercerts · Attachments",
+    blurb:
+      "Attachments providing evidence, commentary, and documentary context for hypercert records.",
+  },
+  {
+    prefix: "org.hypercerts.workscope",
+    title: "Hypercerts · Workscope",
+    blurb: "Workscope expressions (CEL) and tags used by activity claims.",
+  },
+  {
+    prefix: "org.hypercerts.defs",
+    title: "Hypercerts · Shared types",
+    blurb: "Shared type definitions used across the Hypercerts lexicons.",
+  },
+];
+
+function sectionFor(id: string): Section | undefined {
+  return SECTIONS.find((s) => id === s.prefix || id.startsWith(s.prefix + "."));
+}
 
 export const LEXICONS: LexiconDoc[] = Object.values(modules)
-  .filter(
-    (m) =>
-      m &&
-      typeof m.id === "string" &&
-      m.defs &&
-      FOCUS_NAMESPACES.includes(m.id.slice(0, m.id.lastIndexOf(".")))
-  )
+  .filter((m) => m && typeof m.id === "string" && m.defs && sectionFor(m.id))
   .sort((a, b) => a.id.localeCompare(b.id));
 
 export const byId = new Map(LEXICONS.map((l) => [l.id, l]));
@@ -87,44 +144,12 @@ export interface Group {
   lexicons: LexiconDoc[];
 }
 
-interface GroupMeta {
-  ns: string;
-  title: string;
-  blurb: string;
-}
-
-const GROUP_META: GroupMeta[] = [
-  { ns: "app.gainforest.dwc", title: "Darwin Core", blurb: "Biodiversity occurrence records aligned with the TDWG Simple Darwin Core standard. Occurrences reference a shared event; measurements reference an occurrence." },
-  { ns: "app.gainforest.ac", title: "Audiovisual Core", blurb: "Media and passive-acoustic-monitoring records aligned with TDWG Audiovisual Core. Audio and multimedia link to a Darwin Core occurrence as evidence." },
-];
-
-function namespaceOf(id: string): string {
-  return id.slice(0, id.lastIndexOf("."));
-}
-
-export const GROUPS: Group[] = (() => {
-  const byNs = new Map<string, LexiconDoc[]>();
-  for (const lex of LEXICONS) {
-    const ns = namespaceOf(lex.id);
-    if (!byNs.has(ns)) byNs.set(ns, []);
-    byNs.get(ns)!.push(lex);
-  }
-  const groups: Group[] = [];
-  const used = new Set<string>();
-  for (const meta of GROUP_META) {
-    const lexicons = byNs.get(meta.ns);
-    if (lexicons && lexicons.length) {
-      groups.push({ ...meta, lexicons });
-      used.add(meta.ns);
-    }
-  }
-  // any namespace without explicit metadata, appended alphabetically
-  for (const ns of [...byNs.keys()].sort()) {
-    if (used.has(ns)) continue;
-    groups.push({ ns, title: ns, blurb: "", lexicons: byNs.get(ns)! });
-  }
-  return groups;
-})();
+export const GROUPS: Group[] = SECTIONS.map((s) => ({
+  ns: s.prefix,
+  title: s.title,
+  blurb: s.blurb,
+  lexicons: LEXICONS.filter((l) => sectionFor(l.id) === s),
+})).filter((g) => g.lexicons.length > 0);
 
 export function groupOf(id: string): Group | undefined {
   return GROUPS.find((g) => g.lexicons.some((l) => l.id === id));

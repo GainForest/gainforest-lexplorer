@@ -1,12 +1,25 @@
 # GainForest Lexplorer
 
-An explorer for the [GainForest](https://gainforest.net) ATProto lexicon schemas —
-a clone of [lexicons.bio](https://lexicons.bio) adapted to GainForest's full schema set
-(48 lexicons across 16 namespaces).
+An explorer for the ATProto lexicon schemas used by [GainForest](https://gainforest.net) —
+a clone of [lexicons.bio](https://lexicons.bio) adapted to our schema set.
 
 It keeps lexicons.bio's editorial design language — warm paper palette, forest/moss
 green, the DNA-helix mark, Inter / Fraunces / JetBrains Mono — and renders our lexicons
 through the same kind of field tables and star-schema diagram.
+
+## Surfaced schemas
+
+The `lexicons/` directory holds every schema, but the explorer only surfaces the
+sections configured in `SECTIONS` (see `src/data/lexicons.ts`). Currently:
+
+- **Darwin Core** & **Audiovisual Core** — biodiversity records (`app.gainforest.dwc`, `app.gainforest.ac`)
+- **Certified** — identity primitives (`app.certified.*`), from [hypercerts-org/hypercerts-lexicon](https://github.com/hypercerts-org/hypercerts-lexicon)
+- **Hypercerts** — activity claims, collections, funding receipts, attachments,
+  workscope, and shared types (`org.hypercerts.*`), from the same repo
+
+Lexicons outside these sections stay in `lexicons/` (so refs to them still resolve as
+labels) but aren't shown. To surface another, add a `{ prefix, title, blurb }` entry to
+`SECTIONS`.
 
 ## Stack
 
@@ -31,9 +44,11 @@ Every schema under [`lexicons/`](./lexicons) is loaded at build time via Vite's
   `DefBlock`, `SchemaGraph`, `HelixMark`.
 - **`src/theme.ts`** — the palette/typography tokens lifted from lexicons.bio.
 
-The `lexicons/` directory is a copy of the schemas from the
-[`GainForest/lexicons`](https://github.com/GainForest) repo. To refresh, re-copy that
-repo's `lexicons/` folder over this one.
+The `lexicons/` directory holds copies of schemas from two upstreams:
+[`GainForest/lexicons`](https://github.com/GainForest) (the `app.gainforest.*` set) and
+[`hypercerts-org/hypercerts-lexicon`](https://github.com/hypercerts-org/hypercerts-lexicon)
+(the `app.certified.*` and `org.hypercerts.*` sets). To refresh, re-copy the relevant
+folders from those repos over this one.
 
 ## Develop
 

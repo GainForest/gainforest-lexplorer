@@ -13,11 +13,11 @@ export default function Overview() {
         component="p"
         sx={{ color: palette.inkSoft, fontSize: "15.5px", maxWidth: 660, m: 0, mb: "20px" }}
       >
-        AT Protocol record schemas by{" "}
+        AT Protocol record schemas used by{" "}
         <Box component="a" href="https://gainforest.net" target="_blank" rel="noopener" sx={{ color: palette.link }}>
           GainForest
-        </Box>{" "}
-        for biodiversity observations, aligned with{" "}
+        </Box>
+        . Biodiversity observations aligned with{" "}
         <Box component="a" href="https://dwc.tdwg.org/" target="_blank" rel="noopener" sx={{ color: palette.link }}>
           Darwin Core
         </Box>{" "}
@@ -25,17 +25,27 @@ export default function Overview() {
         <Box component="a" href="https://ac.tdwg.org/" target="_blank" rel="noopener" sx={{ color: palette.link }}>
           Audiovisual Core
         </Box>
-        . A star schema:{" "}
-        <Box component="span" sx={mono}>occurrence</Box> references a shared{" "}
-        <Box component="span" sx={mono}>event</Box>;{" "}
-        <Box component="span" sx={mono}>measurement</Box> and{" "}
-        <Box component="span" sx={mono}>media</Box> reference an{" "}
-        <Box component="span" sx={mono}>occurrence</Box>. Cross-record links use{" "}
+        , plus{" "}
+        <Box component="a" href="https://github.com/hypercerts-org/hypercerts-lexicon" target="_blank" rel="noopener" sx={{ color: palette.link }}>
+          Hypercerts &amp; Certified
+        </Box>{" "}
+        schemas for impact claims, funding, collections, and identity. Cross-record links use{" "}
         <Box component="span" sx={mono}>com.atproto.repo.strongRef</Box>.
       </Box>
 
-      <Box sx={{ mb: "40px" }}>
+      <Box sx={{ mb: "8px" }}>
         <SchemaGraph />
+      </Box>
+      <Box
+        sx={{
+          textAlign: "center",
+          fontFamily: fonts.mono,
+          fontSize: "11px",
+          color: palette.inkFaint,
+          mb: "40px",
+        }}
+      >
+        Darwin Core / Audiovisual Core star schema
       </Box>
 
       {GROUPS.map((g) => (
